@@ -1,0 +1,8 @@
+[program:main]
+command=/home/alireza/ai-support/service.sh
+directory=/home/alireza/ai-support
+autostart=true
+autorestart=true
+environment=PATH=/home/alireza/miniconda3/bin:/usr/bin
+redirect_stderr=true
+stdout_logfile=/home/alireza/ai-support/server.log

@@ -1,29 +1,9 @@
----
-title: FastAPI
-description: A FastAPI server
-tags:
-  - fastapi
-  - hypercorn
-  - python
----
+# ai-support
 
-# FastAPI Example
+sudo apt update && sudo apt install supervisor
 
-This example starts up a [FastAPI](https://fastapi.tiangolo.com/) server.
+sudo systemctl status supervisor
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/-NvLj4?referralCode=CRJ8FE)
-## ✨ Features
+https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
 
-- FastAPI
-- [Hypercorn](https://hypercorn.readthedocs.io/)
-- Python 3
-
-## 💁‍♀️ How to use
-
-- Clone locally and install packages with pip using `pip install -r requirements.txt`
-- Run locally using `hypercorn main:app --reload`
-
-## 📝 Notes
-
-- To learn about how to use FastAPI with most of its features, you can visit the [FastAPI Documentation](https://fastapi.tiangolo.com/tutorial/)
-- To learn about Hypercorn and how to configure it, read their [Documentation](https://hypercorn.readthedocs.io/)
+openssl req -x509 -nodes -newkey rsa:4096 -keyout configs/key.pem -out configs/cert.pem -days 365
