@@ -11,8 +11,14 @@ from typing import Optional
 from sqlalchemy.ext.automap import automap_base
 import requests
 
-from configs.config import login_auths_config as lac, database_config as cfg
-from configs.config import google_auth_config as gac
+from configs import config
+
+
+lac = config.login_auths_config
+cfg = config.database_config
+
+gac = config.google_auth_config
+
 
 DATABASE_URL = cfg['url']
 engine = create_engine(DATABASE_URL)
@@ -106,7 +112,7 @@ def login_for_access_token(form_data: login_info = Depends(),):
             detail="Invalid credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
+    
     access_token_expires = timedelta(minutes=lac['ACCESS_TOKEN_EXPIRE_MINUTES'])
     access_token = create_access_token(
         data={"sub": user.Email}, expires_delta=access_token_expires
