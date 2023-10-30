@@ -10,9 +10,8 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.ext.automap import automap_base
 import requests
-
+from sqlalchemy.ext.declarative import declarative_base
 from configs import config_settings
-
 
 lac = config_settings.login_auths_config
 cfg = config_settings.database_config
@@ -21,12 +20,20 @@ gac = config_settings.google_auth_config
 
 
 DATABASE_URL = cfg['url']
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = automap_base()
-Base.prepare(autoload_with=engine)
-UsersDB = Base.classes.Users
-db = SessionLocal()
+# engine = create_engine(DATABASE_URL)
+# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Base = automap_base()
+# Base.prepare(autoload_with=engine)
+# UsersDB = Base.classes.Users
+# db = SessionLocal()
+
+Base = declarative_base()
+engine = create_engine('sqlite:///db.sqlite3')
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
 
 router = APIRouter(prefix="/users",)
 
