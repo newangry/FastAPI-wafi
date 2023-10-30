@@ -1,5 +1,5 @@
 import pinecone
-from configs.config import pinecone as pinecone_config
+from configs.config_settings import pinecone as pinecone_config
 import time
 import AI
 import asyncio

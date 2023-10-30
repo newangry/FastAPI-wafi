@@ -11,13 +11,13 @@ from typing import Optional
 from sqlalchemy.ext.automap import automap_base
 import requests
 
-from configs import config
+from configs import config_settings
 
 
-lac = config.login_auths_config
-cfg = config.database_config
+lac = config_settings.login_auths_config
+cfg = config_settings.database_config
 
-gac = config.google_auth_config
+gac = config_settings.google_auth_config
 
 
 DATABASE_URL = cfg['url']

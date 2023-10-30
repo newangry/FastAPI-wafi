@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.automap import automap_base
 
-from configs.config import database_config as cfg
+from configs.config_settings import database_config as cfg
 from entities.bot import Bots
 from utils import files
 

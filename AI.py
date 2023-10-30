@@ -14,11 +14,11 @@ from langchain.memory import ConversationBufferMemory
 import base64
 import asyncio
 from utils import vectordb
-from configs import config
+from configs import config_settings
 import hashlib
 
-os.environ["OPENAI_API_KEY"] = config.OPENAI_API_KEY
-openai.api_key = config.OPENAI_API_KEY
+os.environ["OPENAI_API_KEY"] = config_settings.OPENAI_API_KEY
+openai.api_key = config_settings.OPENAI_API_KEY
 
 
 def detect_answer(query, model='gpt-4'):
