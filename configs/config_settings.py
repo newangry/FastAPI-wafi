@@ -35,7 +35,7 @@ Given the following extracted parts of a long document and a question, create a 
 Human: {human_input}
 Chatbot:"""
 
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = ""
 SPEAKER = 'en_US/hifi-tts_low' # https://github.com/MycroftAI/mimic3-voices
 EMBEDDING_MODEL = 'text-embedding-ada-002'
 
