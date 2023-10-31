@@ -13,7 +13,7 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = automap_base()
 Base.prepare(autoload_with=engine)
-UsersDB = Base.classes.Users
+UsersDB = Base.classes.users
 
 router = APIRouter(prefix="/users",)
 
