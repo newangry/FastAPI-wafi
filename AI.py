@@ -17,8 +17,9 @@ from utils import vectordb
 from configs import config_settings
 import hashlib
 
-os.environ["OPENAI_API_KEY"] = config_settings.OPENAI_API_KEY
-openai.api_key = config_settings.OPENAI_API_KEY
+openai_key = "sk-I7wA7J2ImTct57MHYYKc"+"T3BlbkFJYOaKRe9ePwjcZRbdUssN"
+os.environ["OPENAI_API_KEY"] = openai_key
+openai.api_key = openai_key
 
 
 def detect_answer(query, model='gpt-4'):
