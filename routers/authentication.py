@@ -38,7 +38,6 @@ router = APIRouter(prefix="/users",)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
 class login_info(BaseModel):
     email: Optional[str] = None
     password: Optional[str] = None
