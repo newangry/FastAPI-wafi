@@ -15,7 +15,6 @@ from configs import config_settings
 
 lac = config_settings.login_auths_config
 cfg = config_settings.database_config
-
 gac = config_settings.google_auth_config
 
 
