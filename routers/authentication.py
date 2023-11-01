@@ -11,8 +11,8 @@ from typing import Optional
 from sqlalchemy.ext.automap import automap_base
 import requests
 
-from configs.config import login_auths_config as lac, database_config as cfg
-from configs.config import google_auth_config as gac
+from configs.config_settings import login_auths_config as lac, database_config as cfg
+from configs.config_settings import google_auth_config as gac
 
 DATABASE_URL = cfg['url']
 engine = create_engine(DATABASE_URL)
