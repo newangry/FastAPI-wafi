@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from configs.config import database_config
+from configs.config_settings import database_config
 from utils.database import sql_to_pydantic
 
 def initialize_database():
