@@ -15,7 +15,7 @@ login_auths_config = {
 google_auth_config = {
     'CLIENT_ID': "120362233982-h7gv79n7ap48v7k9s9t8kqml00auhbo4.apps.googleusercontent.com",
     'CLIENT_SECRET': "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",
-    'REDIRECT_URI': "http://localhost:3000/redirect",
+    'REDIRECT_URI': "https://wafi-six.vercel.app/redirect",
     'TOKEN_ENDPOINT': "https://oauth2.googleapis.com/token",
     'USERINFO_ENDPOINT': "https://www.googleapis.com/oauth2/v3/userinfo"
 }
