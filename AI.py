@@ -14,7 +14,7 @@ from langchain.memory import ConversationBufferMemory
 import base64
 import asyncio
 from utils import vectordb
-from configs import config
+from configs import config_settings
 import hashlib
 from dotenv import load_dotenv
 load_dotenv()
@@ -109,7 +109,7 @@ def encode_tempfile_to_base64(tempfile):
 def mimic3_tts(text):
     with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as fp:
         os.system(
-            f'mimic3 --cuda --voice {config.SPEAKER} "{text}" > {fp.name}')
+            f'mimic3 --cuda --voice {config_settings.SPEAKER} "{text}" > {fp.name}')
         return encode_tempfile_to_base64(fp)
 
     
@@ -122,7 +122,7 @@ def transcribe(audio):
 async def convert_vector_data(text):
     res = openai.Embedding.create(
         input=[text],
-        engine=config.EMBEDDING_MODEL
+        engine=config_settings.EMBEDDING_MODEL
     )
     rq = res['data'][0]['embedding']
     return {
@@ -136,7 +136,7 @@ def hash_string(string):
     return hashed_string
 
 def get_response(context, memory, query, input_type='audio', output_type='audio', need_emo=True):
-    os.environ["OPENAI_API_KEY"] = config.OPENAI_API_KEY
+    os.environ["OPENAI_API_KEY"] = openai_key
     # if input_type == 'audio':
     #     query = transcribe(query)
 
@@ -172,7 +172,7 @@ def get_response(context, memory, query, input_type='audio', output_type='audio'
 if __name__ == "__main__":
 
     query = 'what is the title?'
-    knowledgeBase = create_knowledge_base(config.sample_pdf_path)
+    knowledgeBase = create_knowledge_base(config_settings.sample_pdf_path)
     memory = ConversationBufferMemory(
         memory_key="chat_history", input_key="human_input")
 

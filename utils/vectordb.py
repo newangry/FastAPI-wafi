@@ -5,7 +5,7 @@ import AI
 import asyncio
 pinecone.init(api_key=pinecone_config["API_KEY"],
               environment=pinecone_config["ENVIRONMENT"])
-
+    
 
 async def save_data(index_name, embedded):
     
