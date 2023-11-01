@@ -1,4 +1,3 @@
-from entities.user import Users
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -16,10 +15,14 @@ from configs.config_settings import google_auth_config as gac
 
 DATABASE_URL = cfg['url']
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = automap_base()
-Base.prepare(autoload_with=engine)
+Base.prepare(engine, reflect=True)  # Reflect the tables from the database
+
+# Import the Users class directly
+from entities.user import Users
 UsersDB = Base.classes.Users
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 db = SessionLocal()
 
 router = APIRouter(prefix="/users",)
