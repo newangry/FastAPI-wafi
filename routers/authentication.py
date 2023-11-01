@@ -10,35 +10,24 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.ext.automap import automap_base
 import requests
-from sqlalchemy.ext.declarative import declarative_base
-from configs import config_settings
 
-lac = config_settings.login_auths_config
-cfg = config_settings.database_config
-gac = config_settings.google_auth_config
-
+from configs.config import login_auths_config as lac, database_config as cfg
+from configs.config import google_auth_config as gac
 
 DATABASE_URL = cfg['url']
-# engine = create_engine(DATABASE_URL)
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# Base = automap_base()
-# Base.prepare(autoload_with=engine)
-# UsersDB = Base.classes.Users
-# db = SessionLocal()
-
-Base = declarative_base()
-engine = create_engine('sqlite:///db.sqlite3')
-Base.metadata.create_all(engine)
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = automap_base()
+Base.prepare(autoload_with=engine)
 UsersDB = Base.classes.Users
-
-Session = sessionmaker(bind=engine)
-session = Session()
+db = SessionLocal()
 
 router = APIRouter(prefix="/users",)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 class login_info(BaseModel):
     email: Optional[str] = None
     password: Optional[str] = None
@@ -117,7 +106,7 @@ def login_for_access_token(form_data: login_info = Depends(),):
             detail="Invalid credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     access_token_expires = timedelta(minutes=lac['ACCESS_TOKEN_EXPIRE_MINUTES'])
     access_token = create_access_token(
         data={"sub": user.Email}, expires_delta=access_token_expires

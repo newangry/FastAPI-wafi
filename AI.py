@@ -14,15 +14,18 @@ from langchain.memory import ConversationBufferMemory
 import base64
 import asyncio
 from utils import vectordb
-from configs import config_settings
+from configs import config
 import hashlib
+from dotenv import load_dotenv
+load_dotenv()
 
-openai_key = "sk-I7wA7J2ImTct57MHYYKc"+"T3BlbkFJYOaKRe9ePwjcZRbdUssN"
+openai_key = os.getenv('OPENAI_API_KEY')
+print("-------------OpenAI Key--------------")
+print(openai_key)
 os.environ["OPENAI_API_KEY"] = openai_key
 openai.api_key = openai_key
 
-
-def detect_answer(query, model='gpt-4'):
+def detect_answer(query, model='gpt-3.5-turbo'):
     response = openai.ChatCompletion.create(
         model=model,
         messages=[
@@ -31,7 +34,6 @@ def detect_answer(query, model='gpt-4'):
         ],
         temperature=0.0
     )
-
     return response['choices'][0]['message']['content']
 
 def detect_emo(querry, model='gpt-3.5-turbo'):

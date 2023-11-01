@@ -20,10 +20,6 @@ google_auth_config = {
     'USERINFO_ENDPOINT': "https://www.googleapis.com/oauth2/v3/userinfo"
 }
 
-pinecone = {
-    'API_KEY': '49851ac1-e327-4f21-92c3-ff298f8a4fda',
-    'ENVIRONMENT':'asia-southeast1-gcp-free'
-}
 
 template = """You are a chatbot having a conversation with a human.
 
@@ -35,8 +31,7 @@ Given the following extracted parts of a long document and a question, create a 
 Human: {human_input}
 Chatbot:"""
 
-# OPENAI_API_KEY = ""
+OPENAI_API_KEY = "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"
 SPEAKER = 'en_US/hifi-tts_low' # https://github.com/MycroftAI/mimic3-voices
-EMBEDDING_MODEL = 'text-embedding-ada-002'
 
 sample_pdf_path = "Cryptocurrencies and stablecoins.pdf"

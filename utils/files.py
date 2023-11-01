@@ -131,12 +131,13 @@ def load_chat_memory_with_id(chat_id, load_path="./chat_memory/"):
 def load_chat_history_with_id(chat_id, load_path="./chat_memory/"):
     file_name = f"{chat_id}_history.joblib"
     full_path = os.path.join(load_path, file_name)
-
+    history=[]
     # Check if file exists
     if not os.path.exists(full_path):
-        raise FileNotFoundError(f"Chat history with ID {chat_id} not found at {full_path}")
-
-    history = joblib.load(full_path)
+        print(f"Chat history with ID {chat_id} not found at {full_path}")
+        # raise FileNotFoundError(f"Chat history with ID {chat_id} not found at {full_path}")
+    else:
+        history = joblib.load(full_path)
     return history
 
 def update_chat_history(chat_id, message, date_recieved, response, emo, load_path="./chat_memory/"):
