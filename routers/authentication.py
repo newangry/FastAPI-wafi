@@ -126,6 +126,7 @@ def login_for_access_token_with_google(code: str):
         'redirect_uri': gac['REDIRECT_URI'],
         'grant_type': 'authorization_code'
     }
+    print(data)
     response = requests.post(gac['TOKEN_ENDPOINT'], data=data)
     if response.status_code != 200:
         raise HTTPException(status_code=400, detail="Failed to retrieve access token.")
