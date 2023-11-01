@@ -16,6 +16,7 @@ import asyncio
 from utils import vectordb
 from configs import config_settings
 import hashlib
+from gtts import gTTS
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -36,6 +37,13 @@ def detect_answer(query, model='gpt-3.5-turbo'):
     )
     return response['choices'][0]['message']['content']
 
+
+def convert_text_to_speech(text):
+    tts = gTTS(text=text)
+    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as fp:
+        tts.save(fp.name)
+        return encode_tempfile_to_base64(fp)
+    
 def detect_emo(querry, model='gpt-3.5-turbo'):
     system_prompt = '''You are a emotion detection robot. You are provided a text from a human
                     and your task is to detect which emotion from the folowing list is echoing in the text.

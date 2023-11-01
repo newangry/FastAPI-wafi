@@ -143,7 +143,10 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
 
 @router.post("/tts")
 async def text_to_speech(text: str, current_user: dict = Depends(get_current_user)):
-    return AI.mimic3_tts(text)
+    # return AI.mimic3_tts(text)
+    speech = AI.convert_text_to_speech(text)
+    print(speech)
+    return speech
 
 @router.post("/transcribe/")
 async def transcribe_audio(audio_file: UploadFile, current_user: dict = Depends(get_current_user)):
