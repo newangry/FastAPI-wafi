@@ -21,8 +21,8 @@ google_auth_config = {
 }
 
 pinecone = {
-    'API_KEY': '15fde1c3-19ab-4996-a783-f82ff8aee87c',
-    'ENVIRONMENT':'us-east1-gcp'
+    'API_KEY': '',
+    'ENVIRONMENT':''
 }
 
 template = """You are a chatbot having a conversation with a human.

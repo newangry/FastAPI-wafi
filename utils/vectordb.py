@@ -3,9 +3,15 @@ from configs.config_settings import pinecone as pinecone_config
 import time
 import AI
 import asyncio
-pinecone.init(api_key=pinecone_config["API_KEY"],
-            environment=pinecone_config["ENVIRONMENT"])
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
+env = os.getenv('us-east1-gcp')
+key = os.getenv('15fde1c3-19ab-4996-a783-f82ff8aee87c')
+
+pinecone.init(api_key=key,
+            environment=key)
 
 async def save_data(index_name, embedded):
     

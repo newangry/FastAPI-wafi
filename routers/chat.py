@@ -55,7 +55,7 @@ Router for chats table
 def create_chats(title: str, pdf: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     user_type = current_user.UserType
     if user_type != "admin":
-        raise HTTPException(status_code=400, detail=str("Sigin with Admin"))
+        raise HTTPException(status_code=402, detail=str("Sigin with Admin"))
     try:
         db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
         db.add(db_chat)
@@ -100,6 +100,9 @@ def read_chats(chat_id: int, db: Session = Depends(get_db), current_user: dict =
 # Get all chats
 @router.get("/")
 def read_chats(user_type: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), current_user: dict = Depends(get_current_admin)):
+    user_type_ = current_user.UserType
+    if user_type_ != "user" and user_type_ == "user":
+        raise HTTPException(status_code=404, detail="Chat not found")
     data = []
     chats = db.query(ChatsDB).filter_by(UserID=current_user.ID).order_by(desc(ChatsDB.DateCreated)).offset(skip).limit(limit).all()
     if user_type == "user":
