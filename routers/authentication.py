@@ -116,7 +116,7 @@ def login_for_access_token(form_data: login_info = Depends(),):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.post("/login/google")
+@router.get("/login/google")
 def login_for_access_token_with_google(code: str):
     # Step 1: Exchange authorization code for access token
     data = {
