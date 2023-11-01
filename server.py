@@ -23,10 +23,10 @@ app.include_router(user.router)
 app.include_router(bot.router)
 app.include_router(chat.router)
 
-if __name__ == "__main__":
-    import uvicorn
+# if __name__ == "__main__":
+#     import uvicorn
     
-    if os.path.isfile('configs/key.pem') and os.path.isfile('configs/key.pem'):
-        uvicorn.run(app, host="0.0.0.0", port=8001, ssl_keyfile="configs/key.pem", ssl_certfile="configs/cert.pem")
-    else:
-        uvicorn.run(app, host="0.0.0.0", port=8001)
+#     if os.path.isfile('configs/key.pem') and os.path.isfile('configs/key.pem'):
+#         uvicorn.run(app, host="0.0.0.0", port=8001, ssl_keyfile="configs/key.pem", ssl_certfile="configs/cert.pem")
+#     else:
+#         uvicorn.run(app, host="0.0.0.0", port=8001)
