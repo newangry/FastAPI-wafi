@@ -1,3 +1,4 @@
+from entities.user import Users
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -9,20 +10,16 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.ext.automap import automap_base
 import requests
-
-from configs.config_settings import login_auths_config as lac, database_config as cfg
-from configs.config_settings import google_auth_config as gac
+from sqlalchemy import text
+from configs.config import login_auths_config as lac, database_config as cfg
+from configs.config import google_auth_config as gac
 
 DATABASE_URL = cfg['url']
 engine = create_engine(DATABASE_URL)
-Base = automap_base()
-Base.prepare(engine, reflect=True)  # Reflect the tables from the database
-
-# Import the Users class directly
-from entities.user import Users
-UsersDB = Base.classes.Users
-
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = automap_base()
+Base.prepare(autoload_with=engine)
+UsersDB = Base.classes.Users
 db = SessionLocal()
 
 router = APIRouter(prefix="/users",)
@@ -42,8 +39,8 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 def get_user_by_email(email: str):
-    print(email)
     return db.query(UsersDB).filter_by(Email=email).first()
+
     
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
@@ -117,7 +114,7 @@ def login_for_access_token(form_data: login_info = Depends(),):
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/login/google")
-def login_for_access_token_with_google(code: str):
+def login_for_access_token_with_google(code: str, user_type: str):
     # Step 1: Exchange authorization code for access token
     data = {
         'code': code,
@@ -126,7 +123,6 @@ def login_for_access_token_with_google(code: str):
         'redirect_uri': gac['REDIRECT_URI'],
         'grant_type': 'authorization_code'
     }
-    print(data)
     response = requests.post(gac['TOKEN_ENDPOINT'], data=data)
     if response.status_code != 200:
         raise HTTPException(status_code=400, detail="Failed to retrieve access token.")
@@ -147,12 +143,13 @@ def login_for_access_token_with_google(code: str):
 
     user = db.query(UsersDB).filter_by(Email=user_email).first()
     if not user:
-        new_user = UsersDB(Email=user_email)
+        new_user = UsersDB(Email=user_email, UserType=user_type)
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
         user = new_user
-    
+    else:
+        db.execute(text(f"Update users set UserType='{user_type}' where Email='{user_email}'"))
     access_token_expires = timedelta(minutes=lac['ACCESS_TOKEN_EXPIRE_MINUTES'])
     access_token = create_access_token(
         data={"sub": user.Email}, expires_delta=access_token_expires

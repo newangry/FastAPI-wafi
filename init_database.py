@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from configs.config_settings import database_config
+from configs.config import database_config
 from utils.database import sql_to_pydantic
 
 def initialize_database():
@@ -22,6 +22,7 @@ def create_tables():
         CREATE TABLE Users (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
             Email TEXT UNIQUE,
+            UserType TEXT,
             Password TEXT,
             AccessToken TEXT UNIQUE,
             AccessTokenCounter INT,
@@ -54,7 +55,7 @@ def create_tables():
         (bot_commands, 'bot'), 
         (chat_commands, 'chat'),
     )
-    
+    print(command_sets)
     conn = None
     try:
         conn = sqlite3.connect(database_config['url'].split('///')[-1])

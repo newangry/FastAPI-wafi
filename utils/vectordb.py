@@ -1,11 +1,11 @@
 import pinecone
-from configs.config_settings import pinecone as pinecone_config
+from configs.config import pinecone as pinecone_config
 import time
 import AI
 import asyncio
 pinecone.init(api_key=pinecone_config["API_KEY"],
-              environment=pinecone_config["ENVIRONMENT"])
-    
+            environment=pinecone_config["ENVIRONMENT"])
+
 
 async def save_data(index_name, embedded):
     

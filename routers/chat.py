@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.automap import automap_base
 from datetime import datetime
 
-from configs.config_settings import database_config as cfg
+from configs.config import database_config as cfg
 from entities.chat import Chats
 from utils import files
 import AI
@@ -53,6 +53,9 @@ Router for chats table
 # Create a new chats with file
 @router.post("/create/")
 def create_chats(title: str, pdf: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    user_type = current_user.UserType
+    if user_type != "admin":
+        raise HTTPException(status_code=400, detail=str("Sigin with Admin"))
     try:
         db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
         db.add(db_chat)
@@ -113,7 +116,6 @@ def read_chats(user_type: str, skip: int = 0, limit: int = 10, db: Session = Dep
             if getattr(chat, 'Title', None) != "":
                 data.append(chat)
     return data
-
 # Create a new message
 @router.post("/new_message/")
 def converse(chat_id: int, new_message: str, user_type: str, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -146,7 +148,7 @@ async def text_to_speech(text: str, current_user: dict = Depends(get_current_use
     # return AI.mimic3_tts(text)
     speech = AI.convert_text_to_speech(text)
     print(speech)
-    return speech
+    return 
 
 @router.post("/transcribe/")
 async def transcribe_audio(audio_file: UploadFile, current_user: dict = Depends(get_current_user)):

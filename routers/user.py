@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.automap import automap_base
 import sqlalchemy
 
-from configs.config_settings import database_config as cfg
+from configs.config import database_config as cfg
 from entities.user import Users
 from routers.authentication import get_current_admin, get_current_user, get_password_hash
 
