@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.automap import automap_base
 from datetime import datetime
 
-from configs.config import database_config as cfg
+from configs.config_settings import database_config as cfg
 from entities.chat import Chats
 from utils import files
 import AI
