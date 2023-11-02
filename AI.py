@@ -82,8 +82,8 @@ def create_knowledge_base(pdf_path, chat_id):
             length_function=len
         )
         chunks = text_splitter.split_text(text)
-        chunks_embedded = await asyncio.gather(*[convert_vector_data(chunk) for chunk in chunks])
-        await vectordb.save_data(f"wafi-{chat_id}", chunks_embedded)
+        chunks_embedded = await asyncio.gather(*[convert_vector_data(chunk, chat_id) for chunk in chunks])
+        await vectordb.save_data(chat_id, chunks_embedded)
 
         # Convert the chunks of text into embeddings to form a knowledge base
         # embeddings = OpenAIEmbeddings()
@@ -128,7 +128,7 @@ def transcribe(audio):
     return transcript['text']
 
 
-async def convert_vector_data(text):
+async def convert_vector_data(text, chat_id):
     res = openai.Embedding.create(
         input=[text],
         engine=config_settings.EMBEDDING_MODEL
@@ -136,7 +136,7 @@ async def convert_vector_data(text):
     rq = res['data'][0]['embedding']
     return {
         "id": hash_string(text),
-        "metadata": {"text": text},
+        "metadata": {"text": text, "chat_id":chat_id},
         "values": rq
     }
 

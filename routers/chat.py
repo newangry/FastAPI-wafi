@@ -131,7 +131,7 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
 
     query = new_message
     if user_type == "admin":
-        context = vectordb.get_context_with_id(f"wafi-{chat_id}", query)
+        context = vectordb.get_context_with_id(chat_id, query)
     else:
         context = query
     response = AI.get_response(context, memory, query, 'text')
