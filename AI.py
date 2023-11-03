@@ -28,7 +28,6 @@ print(openai_key)
 os.environ["OPENAI_API_KEY"] = openai_key
 openai.api_key = openai_key
 
-
 def detect_answer(query, model='gpt-3.5-turbo'):
     response = openai.ChatCompletion.create(
         model=model,

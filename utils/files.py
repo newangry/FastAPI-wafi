@@ -30,9 +30,9 @@ def save_file_with_id(file_content, file_name:str, chat_id):
         f_out.write(file_content)
     
     knowledgeBase = AI.create_knowledge_base(file_path, chat_id)
-    # file_name = f"{chat_id}_kb.joblib"
-    # full_path = os.path.join(save_path, file_name)
-    # joblib.dump(knowledgeBase, full_path)
+    file_name = f"{chat_id}_kb.joblib"
+    full_path = os.path.join(save_path, file_name)
+    joblib.dump(knowledgeBase, full_path)
     return ''
     
 def load_pdf_with_id(chat_id, load_path="./files/"):
