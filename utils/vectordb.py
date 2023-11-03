@@ -7,8 +7,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-env = os.getenv('us-east1-gcp')
-key = os.getenv('15fde1c3-19ab-4996-a783-f82ff8aee87c')
+env = os.getenv('PINECONE_ENVIRONMENT')
+key = os.getenv('PINECONE_KEY')
 
 pinecone.init(api_key=key,
             environment=key)
