@@ -131,6 +131,7 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
     query = new_message
     if user_type == "admin":
         context = vectordb.get_context_with_id(chat_id, query)
+        context+=query
     else:
         context = query
     # print(context)
