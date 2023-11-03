@@ -54,18 +54,15 @@ Router for chats table
 @router.post("/create/")
 def create_chats(title: str, pdf: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     user_type = current_user.UserType
+    db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
+
     if user_type != "admin":
         raise HTTPException(status_code=402, detail=str("Sigin with Admin"))
-    try:
-        db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
-        db.add(db_chat)
-        db.commit()
-        db.refresh(db_chat)
-        pdf_content = pdf.file.read()
-        files.save_pdf_with_id(pdf_content, db_chat.ID, "./pdfs/")
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
+    db.add(db_chat)
+    db.commit()
+    db.refresh(db_chat)
+    pdf_content = pdf.file.read()
+    files.save_pdf_with_id(pdf_content, db_chat.ID, "./pdfs/")
     
     # Save the chat memory using joblib
     files.save_chat_memory_with_id(db_chat.ID)
