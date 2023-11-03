@@ -127,7 +127,8 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
     # memory = files.load_chat_memory_with_id(chat_id)
     query = new_message
     if user_type == "admin":
-        context+="Please answer only based on context section. If you not sure the result, `Please answer only I'm not sure based on uploaded data`"
+        
+        context ="Please answer only based on context section. If you not sure the result, `Please answer only I'm not sure based on uploaded data`"
         context = "context section: "+vectordb.get_context_with_id(chat_id, query)
         print("---------Context Syart------")
 
