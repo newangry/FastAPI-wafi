@@ -4,7 +4,7 @@ import AI
 from langchain.memory import ConversationBufferMemory
 from datetime import datetime
 
-def save_pdf_with_id(pdf, chat_id):
+def save_file_with_id(file_content, file_name:str, chat_id):
     """
     Saves the pdf to a file using joblib.
 
@@ -16,22 +16,26 @@ def save_pdf_with_id(pdf, chat_id):
     Returns:
     - str: Full path to the saved file.
     """
-    save_path="./pdfs/"
+    splited_name = file_name.split(".")
+    extension = splited_name[len(splited_name)-1]
+
+    save_path="./files/"
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
     # Create a filename based on the bot ID and save to the desired directory
-    pdf_filename = os.path.join(save_path, f"{chat_id}.pdf")
-    with open(pdf_filename, "wb") as f_out:
-        f_out.write(pdf)
 
-    knowledgeBase = AI.create_knowledge_base(pdf_filename, chat_id)
+    file_path = os.path.join(save_path, f"{chat_id}.{extension}")
+    with open(file_path, "wb") as f_out:
+        f_out.write(file_content)
+    
+    knowledgeBase = AI.create_knowledge_base(file_path, chat_id)
     # file_name = f"{chat_id}_kb.joblib"
     # full_path = os.path.join(save_path, file_name)
     # joblib.dump(knowledgeBase, full_path)
     return ''
     
-def load_pdf_with_id(chat_id, load_path="./pdfs/"):
+def load_pdf_with_id(chat_id, load_path="./files/"):
     """
     Loads the pdf from a file using joblib.
 

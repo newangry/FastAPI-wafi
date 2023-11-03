@@ -18,6 +18,8 @@ from configs import config_settings
 import hashlib
 from gtts import gTTS
 from dotenv import load_dotenv
+from docx import Document
+
 load_dotenv()
 
 openai_key = os.getenv('OPENAI_API_KEY')
@@ -43,9 +45,8 @@ def detect_emo(querry, model='gpt-3.5-turbo'):
     system_prompt = '''You are a emotion detection robot. You are provided a text from a human
                     and your task is to detect which emotion from the folowing list is echoing in the text.
                     The list contains 15 emotions. You can only choose from these 15 and it will be shown on your face as a robot.
-                    So you are not allowed to respond with anything other than what is in the list.
+                    So you are not allowed to respond with anything other than what is in the list. If you get a result that is not in the list, answer only with '1'.
                     Here is the list:
-
                     Angry
                     Confused
                     Cool
@@ -71,7 +72,7 @@ def detect_emo(querry, model='gpt-3.5-turbo'):
     )
     return response['choices'][0]['message']['content']
 
-def create_knowledge_base(pdf_path, chat_id):
+def create_knowledge_base(file_path, chat_id):
 
     async def process_text(text):
         # Split the text into chunks using langchain
@@ -84,22 +85,30 @@ def create_knowledge_base(pdf_path, chat_id):
         chunks = text_splitter.split_text(text)
         chunks_embedded = await asyncio.gather(*[convert_vector_data(chunk, chat_id) for chunk in chunks])
         await vectordb.save_data(chat_id, chunks_embedded)
-
-        # Convert the chunks of text into embeddings to form a knowledge base
-        # embeddings = OpenAIEmbeddings()
-        # knowledgeBase = FAISS.from_texts(chunks, embeddings)
-        # print("--------------Strt Embedding------------")
-        # print(knowledgeBase)
-        # print("-------------------End-----")
         return ''
-    pdf_reader = PdfReader(pdf_path)
-    text = ""
-    for page in pdf_reader.pages:
-        text += page.extract_text()
-    # knowledgeBase = process_text(text)
+    
+    text = getTextFromFile(file_path)
+    print(text)
     asyncio.run(process_text(text))
     return ''
 
+def getTextFromFile(file_path: str):
+    splited_txt = file_path.split(".")
+    extension = splited_txt[len(splited_txt)-1].upper()
+    text=""
+    if extension == "PDF":
+        pdf_reader = PdfReader(file_path)
+        for page in pdf_reader.pages:
+            text += page.extract_text()
+    if extension == "DOC" or extension == "DOCX":
+        document = Document(file_path)
+        content = []
+        for paragraph in document.paragraphs:
+            text += paragraph.text.strip()
+    if extension == "TXT":
+        with open(file_path, 'r') as file:
+            text = file.read()
+    return text
 
 def encode_tempfile_to_base64(tempfile):
     with open(tempfile.name, 'rb') as f:
@@ -168,6 +177,19 @@ def get_response(context, memory, query, input_type='audio', output_type='audio'
         result['audio_response'] = audio_response
 
     return result
+
+def get_openai_generator(prompt: str):
+    openai_stream = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.0,
+        stream=True,
+    )
+    for event in openai_stream:
+        if "content" in event["choices"][0].delta:
+            current_response = event["choices"][0].delta.content
+            # important format
+            yield current_response
 
 
 if __name__ == "__main__":

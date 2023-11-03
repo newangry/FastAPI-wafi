@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.automap import automap_base
 from datetime import datetime
-
+from fastapi.responses import StreamingResponse
 from configs.config_settings import database_config as cfg
 from entities.chat import Chats
 from utils import files
@@ -12,6 +12,7 @@ import AI
 import tempfile
 import shutil
 from utils import vectordb
+import asyncio
 
 DATABASE_URL = cfg['url']
 engine = create_engine(DATABASE_URL)
@@ -52,8 +53,8 @@ Router for chats table
 
 # Create a new chats with file
 @router.post("/create/")
-def create_chats(title: str, pdf: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    user_type = current_user.UserType
+def create_chats(title: str, user_type: str, file: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    # user_type = current_user.UserType
     db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
 
     if user_type != "admin":
@@ -62,8 +63,9 @@ def create_chats(title: str, pdf: UploadFile = File(...), db: Session = Depends(
         db.add(db_chat)
         db.commit()
         db.refresh(db_chat)
-        pdf_content = pdf.file.read()
-        files.save_pdf_with_id(pdf_content, db_chat.ID)
+        file_content = file.file.read()
+        file_name = file.filename
+        files.save_file_with_id(file_content, file_name, db_chat.ID)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -128,32 +130,48 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
         raise HTTPException(status_code=404, detail="Chat not found")
     
     memory = files.load_chat_memory_with_id(chat_id)
-    date_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     query = new_message
     if user_type == "admin":
         context = vectordb.get_context_with_id(chat_id, query)
     else:
         context = query
-    response = AI.get_response(context, memory, query, 'text')
+    # print(context)
+    
+    return StreamingResponse(AI.get_openai_generator(context), media_type='text/event-stream')
+
+    # response = AI.get_response(context, memory, query, 'text')
+    # history = files.update_chat_history(
+    #     chat_id,
+    #     query,
+    #     date_now,
+    #     response['response'],
+    #     response['emotion']
+    # )
+    # # Save the chat memory using joblib
+    # files.save_chat_memory_with_id(chat_id=chat_id, memory=memory, history=history)
+    # return response
+@router.post("/save_history")
+def save_history(ai: str, message: str, chat_id: int, emotion,current_user: dict = Depends(get_current_user)):
+    date_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     history = files.update_chat_history(
         chat_id,
-        query,
+        message,
         date_now,
-        response['response'],
-        response['emotion']
+        ai,
+        emotion
     )
-    # Save the chat memory using joblib
-    files.save_chat_memory_with_id(chat_id=chat_id, memory=memory, history=history)
-    return response
+    return ''
 
 @router.post("/tts")
 async def text_to_speech(text: str, current_user: dict = Depends(get_current_user)):
-    # return AI.mimic3_tts(text)
-    speech = AI.convert_text_to_speech(text)
-    print(speech)
-    return speech
-
+    speech = AI.convert_text_to_speech(text) 
+    emotion = AI.detect_emo(text)
+    return {
+        "speech": speech,
+        "emotion": emotion
+    }
+    
 @router.post("/transcribe/")
 async def transcribe_audio(audio_file: UploadFile, current_user: dict = Depends(get_current_user)):
     temp_dir = tempfile.TemporaryDirectory()
