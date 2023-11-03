@@ -22,7 +22,6 @@ async def save_data(chat_id, embedded):
     index.upsert(embedded)
     return "success"
 
-
 def get_context_with_id(chat_id, query):
     # index_name='wafi-37'
     print(pinecone.list_indexes())

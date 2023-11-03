@@ -149,7 +149,7 @@ def login_for_access_token_with_google(code: str, user_type: str):
         db.refresh(new_user)
         user = new_user
     else:
-        db.execute(text(f"Update users set UserType='{user_type}' where Email='{user_email}', ID={user.ID}"))
+        db.execute(text(f"Update users set UserType='{user_type}', ID={user.ID} where Email='{user_email}'"))
         db.close()
     access_token_expires = timedelta(minutes=lac['ACCESS_TOKEN_EXPIRE_MINUTES'])
     access_token = create_access_token(
