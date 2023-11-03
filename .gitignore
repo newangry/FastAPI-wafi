@@ -162,4 +162,5 @@ config.py
 *.db
 *.pem
 pdfs/
+files/
 chat_memory/
