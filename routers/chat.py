@@ -53,19 +53,16 @@ Router for chats table
 
 # Create a new chats with file
 @router.post("/create/")
-def create_chats(title: str, user_type: str, file: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def create_chats(title: str, chat_id: int, user_type: str, file: UploadFile = File(...) ,db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     # user_type = current_user.UserType
     db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
 
     if user_type != "admin":
         raise HTTPException(status_code=402, detail=str("Sigin with Admin"))
     try:
-        db.add(db_chat)
-        db.commit()
-        db.refresh(db_chat)
         file_content = file.file.read()
         file_name = file.filename
-        files.save_file_with_id(file_content, file_name, db_chat.ID)
+        files.save_file_with_id(file_content, file_name, chat_id)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -130,12 +127,16 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
     # memory = files.load_chat_memory_with_id(chat_id)
     query = new_message
     if user_type == "admin":
-        context = vectordb.get_context_with_id(chat_id, query)
+        context+="Please answer only based on context section. If you not sure the result, `Please answer only I'm not sure based on uploaded data`"
+        context = "context section: "+vectordb.get_context_with_id(chat_id, query)
+        print("---------Context Syart------")
+
+        print(context)
+        print("---------Context End------")
+
         context+=query
     else:
         context = query
-    # print(context)
-    
     return StreamingResponse(AI.get_openai_generator(context), media_type='text/event-stream')
 
     # response = AI.get_response(context, memory, query, 'text')
