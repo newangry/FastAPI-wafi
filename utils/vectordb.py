@@ -16,9 +16,6 @@ pinecone.init(api_key=key,
 async def save_data(chat_id, embedded):
 
     list = pinecone.list_indexes()
-    # if len(list) > 0:
-    #     pinecone.delete_index(list[0])
-
     if "wafi" not in pinecone.list_indexes():
         pinecone.create_index("wafi", dimension=1536, metric="cosine")
         time.sleep(1)

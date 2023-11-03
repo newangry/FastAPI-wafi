@@ -62,7 +62,7 @@ def create_chats(title: str, pdf: UploadFile = File(...), db: Session = Depends(
         db.commit()
         db.refresh(db_chat)
         pdf_content = pdf.file.read()
-        files.save_pdf_with_id(pdf_content, db_chat.ID)
+        files.save_pdf_with_id(pdf_content, db_chat.ID, "./pdfs/")
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
