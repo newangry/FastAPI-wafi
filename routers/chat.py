@@ -96,7 +96,6 @@ def read_chats(chat_id: int, db: Session = Depends(get_db), current_user: dict =
     chat = db.query(ChatsDB).filter_by(ID=chat_id).first()
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
-    
     chat_history = files.load_chat_history_with_id(chat_id)
     return {'chat': chat, 'chat_history': chat_history}
 
@@ -128,9 +127,7 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
     chat = db.query(ChatsDB).filter_by(UserID=current_user.ID, ID=chat_id).first()
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
-    
-    memory = files.load_chat_memory_with_id(chat_id)
-
+    # memory = files.load_chat_memory_with_id(chat_id)
     query = new_message
     if user_type == "admin":
         context = vectordb.get_context_with_id(chat_id, query)

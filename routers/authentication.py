@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.ext.automap import automap_base
 import requests
+
 from sqlalchemy import text
 from configs.config_settings import login_auths_config as lac, database_config as cfg
 from configs.config_settings import google_auth_config as gac
