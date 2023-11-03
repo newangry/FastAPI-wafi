@@ -4,7 +4,7 @@ import AI
 from langchain.memory import ConversationBufferMemory
 from datetime import datetime
 
-def save_pdf_with_id(pdf, chat_id, save_path):
+def save_pdf_with_id(pdf, chat_id):
     """
     Saves the pdf to a file using joblib.
 
@@ -16,6 +16,7 @@ def save_pdf_with_id(pdf, chat_id, save_path):
     Returns:
     - str: Full path to the saved file.
     """
+    save_path="./pdfs/"
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 

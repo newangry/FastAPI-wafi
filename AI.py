@@ -73,7 +73,7 @@ def detect_emo(querry, model='gpt-3.5-turbo'):
 
 def create_knowledge_base(pdf_path, chat_id):
 
-    async def process_text(text):
+    async def process_text(text, chat_id):
         # Split the text into chunks using langchain
         text_splitter = CharacterTextSplitter(
             separator="\n",
@@ -97,7 +97,7 @@ def create_knowledge_base(pdf_path, chat_id):
     for page in pdf_reader.pages:
         text += page.extract_text()
     # knowledgeBase = process_text(text)
-    asyncio.run(process_text(text))
+    asyncio.run(process_text(text, chat_id))
     return ''
 
 
