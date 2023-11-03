@@ -18,7 +18,7 @@ async def save_data(chat_id, embedded):
     if "wafi" not in pinecone.list_indexes():
         pinecone.create_index("wafi", dimension=1536, metric="cosine")
         time.sleep(1)
-    index = pinecone.GRPCIndex("wafi")
+    index = pinecone.Index("wafi")
     index.upsert(embedded)
     return "success"
 
