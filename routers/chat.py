@@ -131,7 +131,7 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
     query = new_message
     if user_type == "admin":
         
-        context ="You are a hobbyist bot that provides friendly answers to the user. If you not sure the result, `Please answer only I'm not sure based on uploaded data`"
+        context ="You are a kindly bot that provides friendly answers to the user."
         context = context+vectordb.get_context_with_id(chat_id, query)
         print("---------Context Syart------")
         print(context)
