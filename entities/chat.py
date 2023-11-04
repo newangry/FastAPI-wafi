@@ -9,3 +9,4 @@ class Chats(BaseModel):
     UserID: Optional[int] = None
     ChatLocation: Optional[str] = None
     Token: Optional[str] = None
+    ChatId: Optional[int] = None

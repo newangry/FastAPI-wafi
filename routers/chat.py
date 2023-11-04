@@ -55,14 +55,17 @@ Router for chats table
 @router.post("/create/")
 def create_chats(title: str, chat_id: int, user_type: str, file: UploadFile = File(...) ,db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     # user_type = current_user.UserType
-    db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
-
+    db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID, ChatId=chat_id)
+    
     if user_type != "admin":
         raise HTTPException(status_code=402, detail=str("Sigin with Admin"))
     try:
+        db.add(db_chat)
+        db.commit()
+        db.refresh(db_chat)
         file_content = file.file.read()
         file_name = file.filename
-        files.save_file_with_id(file_content, file_name, chat_id)
+        files.save_file_with_id(file_content, file_name, db_chat.ID)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -75,7 +78,7 @@ def create_chats(title: str, chat_id: int, user_type: str, file: UploadFile = Fi
 @router.post("/new_chat/")
 def create_chats(title: str = "", db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     try:
-        db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID)
+        db_chat = ChatsDB(Title=title, DateCreated=datetime.now(), UserID=current_user.ID, ChatId=-1)
         db.add(db_chat)
         db.commit()
         db.refresh(db_chat)
@@ -98,12 +101,12 @@ def read_chats(chat_id: int, db: Session = Depends(get_db), current_user: dict =
 
 # Get all chats
 @router.get("/")
-def read_chats(user_type: str, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), current_user: dict = Depends(get_current_admin)):
+def read_chats(user_type: str, chat_id: int, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), current_user: dict = Depends(get_current_admin)):
     user_type_ = current_user.UserType
     if user_type_ != "user" and user_type_ == "user":
         raise HTTPException(status_code=404, detail="Chat not found")
     data = []
-    chats = db.query(ChatsDB).filter_by(UserID=current_user.ID).order_by(desc(ChatsDB.DateCreated)).offset(skip).limit(limit).all()
+    chats = db.query(ChatsDB).filter_by(UserID=current_user.ID, ChatId=chat_id).order_by(desc(ChatsDB.DateCreated)).offset(skip).limit(limit).all()
     if user_type == "user":
         for chat in chats:
             id = getattr(chat, 'ID', None )
@@ -112,11 +115,11 @@ def read_chats(user_type: str, skip: int = 0, limit: int = 10, db: Session = Dep
             if len(chat_history) > 0:
                 last_message = chat_history[len(chat_history)-1]["Human"]
             last_message["ID"] = id
+            last_message['ChatId'] =  getattr(chat, 'ChatId', None )
             data.append(last_message)
     else:
         for chat in chats:
-            if getattr(chat, 'Title', None) != "":
-                data.append(chat)
+           data.append(chat)
     return data
 # Create a new message
 @router.post("/new_message/")
@@ -128,13 +131,11 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
     query = new_message
     if user_type == "admin":
         
-        context ="Please answer only based on context section. If you not sure the result, `Please answer only I'm not sure based on uploaded data`"
-        context = context+"context section: "+vectordb.get_context_with_id(chat_id, query)
+        context ="You are a hobbyist bot that provides friendly answers to the user. If you not sure the result, `Please answer only I'm not sure based on uploaded data`"
+        context = context+vectordb.get_context_with_id(chat_id, query)
         print("---------Context Syart------")
-
         print(context)
         print("---------Context End------")
-
         context+=query
     else:
         context = query
