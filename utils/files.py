@@ -145,7 +145,7 @@ def load_chat_history_with_id(chat_id, load_path="./chat_memory/"):
         history = joblib.load(full_path)
     return history
 
-def update_chat_history(chat_id, message, date_recieved, response, emo, load_path="./chat_memory/"):
+def update_chat_history(chat_id, message, date_recieved, response, emo, speech, load_path="./chat_memory/"):
 
     file_name = f"{chat_id}_history.joblib"
     full_path = os.path.join(load_path, file_name)
@@ -166,7 +166,8 @@ def update_chat_history(chat_id, message, date_recieved, response, emo, load_pat
         "AI": {
             "message": response,
             "emotion": emo,
-            "date": date_now
+            "date": date_now,
+            "speech":speech
         }
     }
 

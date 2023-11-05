@@ -153,26 +153,32 @@ def converse(chat_id: int, new_message: str, user_type: str, current_user: dict 
     # files.save_chat_memory_with_id(chat_id=chat_id, memory=memory, history=history)
     # return response
 @router.post("/save_history")
-def save_history(ai: str, message: str, chat_id: int, emotion,current_user: dict = Depends(get_current_user)):
+def save_history(ai: str, message: str, chat_id: int, emotion, current_user: dict = Depends(get_current_user)):
     date_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    speech = AI.convert_text_to_speech(ai)
     history = files.update_chat_history(
         chat_id,
         message,
         date_now,
         ai,
-        emotion
+        emotion,
+        speech
     )
     return ''
 
 @router.post("/tts")
 async def text_to_speech(text: str, current_user: dict = Depends(get_current_user)):
     speech = AI.convert_text_to_speech(text) 
-    emotion = AI.detect_emo(text)
-    return {
-        "speech": speech,
-        "emotion": emotion
-    }
-    
+    return speech
+    # emotion = AI.detect_emo(text)
+    # return {
+    #     "speech": speech,
+    #     "emotion": emotion
+    #}
+@router.post("/get_emotion")
+async def get(text: str, current_user: dict = Depends(get_current_user)):
+    emotion = AI.detect_emo(text) 
+    return emotion
 @router.post("/transcribe/")
 async def transcribe_audio(audio_file: UploadFile, current_user: dict = Depends(get_current_user)):
     temp_dir = tempfile.TemporaryDirectory()

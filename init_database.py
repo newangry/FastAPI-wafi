@@ -46,6 +46,7 @@ def create_tables():
             DateCreated DATETIME,
             UserID INTEGER REFERENCES Users (ID),
             ChatLocation TEXT,
+            SPEECH TEXT,
             Token TEXT,
             ChatId INT
         )

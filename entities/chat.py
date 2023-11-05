@@ -8,5 +8,6 @@ class Chats(BaseModel):
     DateCreated: Optional[date] = None
     UserID: Optional[int] = None
     ChatLocation: Optional[str] = None
+    SPEECH: Optional[str] = None
     Token: Optional[str] = None
     ChatId: Optional[int] = None
